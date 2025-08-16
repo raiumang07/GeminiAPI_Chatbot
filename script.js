@@ -57,62 +57,56 @@ const showTypingEffect = (text, textElement, incomingMessageDiv) => {
 //fetch response from th API based on your message
 const generateAPIResponse = async (incomingMessageDiv) => {
     const textElement = incomingMessageDiv.querySelector(".text");
-    // send a POST request to the API URL with the user's message
+
     try {
-        const res = await fetch("https://geminiapi-chatbot-l44h.onrender.com", {
+        // Use your local backend while developing. If you use a deployed backend,
+        // replace this URL with your deployed URL (https://...).
+        const res = await fetch("http://localhost:3000/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message: userMessage })
         });
+
         const data = await res.json();
-        console.log(data.reply);
 
-        // const fetchOptions = {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //         "X-goog-api-key": API_KEY
-        //     },
-        //     body: JSON.stringify({
-        //         // same shape as your cURL example
-        //         contents: [
-        //             {
-        //                 parts: [{ text: userMessage }]
-        //             }
-        //         ]
-        //     })
-        // };
+        if (!res.ok) {
+            // backend may return useful info in data.error or data.details
+            const errMsg =
+                data?.error?.message ||
+                data?.details?.error?.message ||
+                (typeof data === "string" ? data : JSON.stringify(data)) ||
+                "API error";
+            throw new Error(errMsg);
+        }
 
-        // const response = await fetch(API_URL, fetchOptions);
-        // const response = await fetch(API_URL, {
-        //     method: "POST",
-        //     headers: { "Content-Type": "application/json" },
-        //     body: JSON.stringify({
-        //         contents: [{
-        //             role: "user",
-        //             parts: [{ text: userMessage }]
-        //         }]
-        //     })
-        // });
-        // const data = await response.json();
+        // Prefer the backend's simplified reply, but fall back to the full Gemini shape if needed.
+        let apiResponse =
+            data?.reply ??
+            // safe access for candidates array: use ?. [0] for arrays
+            (data?.candidates?.[0]?.content?.parts
+                ? data.candidates
+                    .map(c => c.content?.parts?.map(p => p.text).join(""))
+                    .filter(Boolean)
+                    .join("\n\n")
+                : null) ??
+            "";
 
-        if (!res.ok) throw new Error(data.error?.message || "API error");
-        // console.log(data);
-        //get the apiResponse text and remove the asterisks from it
-        const apiResponse = data?.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '$1');
-        // console.log(apiResponse);
+        apiResponse = String(apiResponse || "").trim();
+
+        if (!apiResponse) throw new Error("Empty response from API");
+
+        // remove markdown bold markers if present and show with typing effect
+        apiResponse = apiResponse.replace(/\*\*(.*?)\*\*/g, "$1");
         showTypingEffect(apiResponse, textElement, incomingMessageDiv);
+
     } catch (error) {
         isResponseGenerating = false;
-        textElement.innerText = error.message;
+        textElement.innerText = error?.message || "Error generating response";
         textElement.classList.add("error");
-    }
-    finally {
+    } finally {
         incomingMessageDiv.classList.remove("loading");
     }
-
-}
-
+};
 
 // show a loading while waiting for the API response
 const showLoadingAnimation = () => {
