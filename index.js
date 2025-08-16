@@ -33,8 +33,10 @@ app.post('/', async (req, res) => {
             }
         );
 
-        const botReply = response.data.candidates[0].content.parts[0].text;
+        const candidate = response.data.candidates?.[0];
+        const botReply = candidate?.content?.parts?.[0]?.text || "No answer from Gemini";
         res.json({ reply: botReply });
+
 
     } catch (err) {
         console.error(err?.response?.data || err);
