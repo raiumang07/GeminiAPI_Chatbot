@@ -17,9 +17,9 @@ app.post('/', async (req, res) => {
         const response = await axios.post(
             'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
             {
-                prompt: {
-                    text: userMessage
-                }
+                contents: [
+                    { parts: [{ text: userMessage }] }
+                ]
             },
             {
                 headers: {
@@ -31,20 +31,22 @@ app.post('/', async (req, res) => {
 
         console.log(JSON.stringify(response.data, null, 2));
 
+        // Combine all parts from all candidates
         const candidates = response.data.candidates || [];
         let botReply = "No answer from Gemini";
 
         if (candidates.length > 0) {
             botReply = candidates
                 .map(candidate => candidate.content?.parts?.map(p => p.text).join(''))
-                .filter(Boolean) // remove undefined/null
-                .join('\n\n'); // separate multiple candidates
+                .filter(Boolean)
+                .join('\n\n');
         }
 
         res.json({ reply: botReply });
+
     } catch (err) {
-        console.error(err?.response?.data || err);
-        res.status(500).json({ error: 'Something went wrong' });
+        console.error('Axios error data:', err.response?.data);
+        res.status(500).json({ error: 'Something went wrong', details: err.response?.data });
     }
 });
 
