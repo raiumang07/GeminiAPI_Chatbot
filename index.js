@@ -17,27 +17,31 @@ app.post('/', async (req, res) => {
         const response = await axios.post(
             'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
             {
-                contents: [
-                    {
-                        parts: [
-                            { text: userMessage }
-                        ]
-                    }
-                ]
+                prompt: {
+                    text: userMessage
+                }
             },
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-goog-api-key': process.env.API_KEY
+                    'X-Goog-Api-Key': process.env.API_KEY
                 }
             }
         );
 
-        const candidate = response.data.candidates?.[0];
-        const botReply = candidate?.content?.parts?.[0]?.text || "No answer from Gemini";
+        console.log(JSON.stringify(response.data, null, 2));
+
+        const candidates = response.data.candidates || [];
+        let botReply = "No answer from Gemini";
+
+        if (candidates.length > 0) {
+            botReply = candidates
+                .map(candidate => candidate.content?.parts?.map(p => p.text).join(''))
+                .filter(Boolean) // remove undefined/null
+                .join('\n\n'); // separate multiple candidates
+        }
+
         res.json({ reply: botReply });
-
-
     } catch (err) {
         console.error(err?.response?.data || err);
         res.status(500).json({ error: 'Something went wrong' });
