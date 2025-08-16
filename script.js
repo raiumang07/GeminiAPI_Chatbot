@@ -61,7 +61,7 @@ const generateAPIResponse = async (incomingMessageDiv) => {
     try {
         // Use your local backend while developing. If you use a deployed backend,
         // replace this URL with your deployed URL (https://...).
-        const res = await fetch("http://localhost:3000/", {
+        const res = await fetch("https://geminiapi-chatbot-l44h.onrender.com", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message: userMessage })
