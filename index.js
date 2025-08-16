@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post('/chat', async (req, res) => {
+app.post('/', async (req, res) => {
     const userMessage = req.body.message;
 
     try {
