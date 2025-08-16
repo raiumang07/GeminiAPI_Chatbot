@@ -9,29 +9,39 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// POST route
 app.post('/', async (req, res) => {
     const userMessage = req.body.message;
 
     try {
         const response = await axios.post(
-            'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:streamGenerateContent',
+            'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
             {
-                contents: [{ role: 'user', parts: [{ text: userMessage }] }]
+                contents: [
+                    {
+                        parts: [
+                            { text: userMessage }
+                        ]
+                    }
+                ]
             },
             {
-                params: { key: process.env.API_KEY }
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-goog-api-key': process.env.API_KEY
+                }
             }
         );
 
-
         const botReply = response.data.candidates[0].content.parts[0].text;
         res.json({ reply: botReply });
+
     } catch (err) {
-        console.error(err);
+        console.error(err?.response?.data || err);
         res.status(500).json({ error: 'Something went wrong' });
     }
 });
 
-app.listen(3000, () => {
+app.listen(process.env.PORT || 3000, () => {
     console.log('Backend running on http://localhost:3000');
 });

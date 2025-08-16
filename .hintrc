@@ -1,14 +1,10 @@
 {
-  "extends": [
-    "development"
-  ],
+  "extends": ["development"],
   "hints": {
     "compat-api/css": [
       "default",
       {
-        "ignore": [
-          "width: fit-content"
-        ]
+        "ignore": ["width: fit-content"]
       }
     ]
   }
