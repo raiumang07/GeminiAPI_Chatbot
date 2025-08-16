@@ -96,7 +96,7 @@ const generateAPIResponse = async (incomingMessageDiv) => {
         // });
         // const data = await response.json();
 
-        if (!response.ok) throw new Error(data.error.message);
+        if (!res.ok) throw new Error(data.error?.message || "API error");
         // console.log(data);
         //get the apiResponse text and remove the asterisks from it
         const apiResponse = data?.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '$1');
