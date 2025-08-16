@@ -1,0 +1,18 @@
+{
+  "name": "geminiapi_chatbot-main",
+  "version": "1.0.0",
+  "description": "A sleek, responsive chatbot UI powered by Google's Gemini API — designed for seamless interactions with customizable themes and persistent chat history.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.11.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0"
+  }
+}
