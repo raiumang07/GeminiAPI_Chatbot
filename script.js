@@ -59,7 +59,7 @@ const generateAPIResponse = async (incomingMessageDiv) => {
     const textElement = incomingMessageDiv.querySelector(".text");
     // send a POST request to the API URL with the user's message
     try {
-        const res = await fetch("http://localhost:3000/chat", {
+        const res = await fetch("https://geminiapi-chatbot-l44h.onrender.com", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message: userInput })
