@@ -62,7 +62,7 @@ const generateAPIResponse = async (incomingMessageDiv) => {
         const res = await fetch("https://geminiapi-chatbot-l44h.onrender.com", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: userInput })
+            body: JSON.stringify({ message: userMessage })
         });
         const data = await res.json();
         console.log(data.reply);
