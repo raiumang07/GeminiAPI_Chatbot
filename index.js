@@ -14,7 +14,7 @@ app.post('/', async (req, res) => {
 
     try {
         const response = await axios.post(
-            'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
+            'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:streamGenerateContent',
             {
                 contents: [{ role: 'user', parts: [{ text: userMessage }] }]
             },
@@ -22,6 +22,7 @@ app.post('/', async (req, res) => {
                 params: { key: process.env.API_KEY }
             }
         );
+
 
         const botReply = response.data.candidates[0].content.parts[0].text;
         res.json({ reply: botReply });
